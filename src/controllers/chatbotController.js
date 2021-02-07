@@ -65,9 +65,7 @@ let getWebhook = (req, res) => {
     }
 };
 
-
-
-// Sends response messages via the Send API
+// Quick reply
 function quick(sender_psid) {
     // Construct the message body
     let request_body = {
@@ -108,6 +106,7 @@ function quick(sender_psid) {
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
+
 function callSendAPI(sender_psid, response) {
     // Construct the message body
     let request_body = {
@@ -131,6 +130,7 @@ function callSendAPI(sender_psid, response) {
         }
     });
 }
+
 let callSendAPIWithTemplate = (sender_psid,message) => {
     let attachment_url = message.attachments[0].payload.url;
 
@@ -142,15 +142,7 @@ let callSendAPIWithTemplate = (sender_psid,message) => {
             "attachment": {
                 "type": "file",
                 "payload": {
-                   // "template_type": "generic",
                     "url": attachment_url,
-                    // "elements": [
-                    //     {
-                    //         "title": "Wanted",
-                    //         "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
-                            
-                    //     }
-                    // ]
                 }
             }
         }
@@ -163,13 +155,12 @@ let callSendAPIWithTemplate = (sender_psid,message) => {
         "json": body
     }, (err, res, body) => {
         if (!err) {
-            // console.log('message sent!')
+            console.log('message sent!')
         } else {
             console.error("Unable to send message:" + err);
         }
     });
 };
-
 
 function handleMessage(sender_psid, message) {
 
@@ -191,10 +182,7 @@ function handleMessage(sender_psid, message) {
            callSendAPI(sender_psid,message.text);
                
             
-        } else if (message.attachments[0].type !== 'image') {
-            // Get the URL of the message attachment
-            let attachment_url = message.attachments[0].payload.url;
-        //    console.log(message.attachments[0].payload.url);
+        } else if (message.attachments[0].type === 'file') {
 
             callSendAPIWithTemplate(sender_psid,message);
 
@@ -203,6 +191,7 @@ function handleMessage(sender_psid, message) {
       }
     
 }
+
 module.exports = {
   postWebhook: postWebhook,
   getWebhook: getWebhook
