@@ -12,7 +12,7 @@ viewEngine(app);
 //use body-parser to post data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
-
+ 
 //init all web routes
 initWebRoutes(app);
 
