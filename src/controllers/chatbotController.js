@@ -131,7 +131,7 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
-let callSendAPIWithTemplate = (sender_psid,message) => {
+let callSendAPIWithFile = (sender_psid,message) => {
     let attachment_url = message.attachments[0].payload.url;
 
     let body = {
@@ -161,10 +161,71 @@ let callSendAPIWithTemplate = (sender_psid,message) => {
         }
     });
 };
+let callSendAPIWithVideo = (sender_psid,message) => {
+    let attachment_url = message.attachments[0].payload.url;
+
+    let body = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "message": {
+            "attachment": {
+                "type": "video",
+                "payload": {
+                    "url": attachment_url,
+                }
+            }
+        }
+    };
+
+    request({
+        "uri": "https://graph.facebook.com/v6.0/me/messages",
+        "qs": { "access_token": process.env.FB_PAGE_TOKEN },
+        "method": "POST",
+        "json": body
+    }, (err, res, body) => {
+        if (!err) {
+            console.log('message sent!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+};
+let callSendAPIWithAudio = (sender_psid,message) => {
+    let attachment_url = message.attachments[0].payload.url;
+
+    let body = {
+        "recipient": {
+            "id": sender_psid
+        },
+        "message": {
+            "attachment": {
+                "type": "audio",
+                "payload": {
+                    "url": attachment_url,
+                }
+            }
+        }
+    };
+
+    request({
+        "uri": "https://graph.facebook.com/v6.0/me/messages",
+        "qs": { "access_token": process.env.FB_PAGE_TOKEN },
+        "method": "POST",
+        "json": body
+    }, (err, res, body) => {
+        if (!err) {
+            console.log('message sent!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+};
+
+
 
 function handleMessage(sender_psid, message) {
 
-    let response;
     // Check if the message contains text
      if (message.text) {
         if(message.text === "Comment vas-tu ?"){
@@ -184,7 +245,15 @@ function handleMessage(sender_psid, message) {
             
         } else if (message.attachments[0].type === 'file') {
 
-            callSendAPIWithTemplate(sender_psid,message);
+            callSendAPIWithFile(sender_psid,message);
+
+        }
+        else if (message.attachments[0].type === 'video'){
+            callSendAPIWithVideo(sender_psid,message);
+
+        }
+        else if (message.attachments[0].type === 'audio'){
+            callSendAPIWithAudio(sender_psid,message);
 
         }
     
